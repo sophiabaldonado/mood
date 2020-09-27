@@ -1,2 +1,0 @@
-# mood
-Aardvark Emoji Gadget
