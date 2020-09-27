@@ -200,7 +200,7 @@ class Mood extends React.Component< {}, TestPanelState >
 						</AvTransform>
 					</AvStandardGrabbable>
 				</div>
-				{ this.renderLocal() }
+				{ AvGadget.instance().isRemote ? this.renderRemote() : this.renderLocal() }
 			</div> );
 	}
 
