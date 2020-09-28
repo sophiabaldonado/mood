@@ -160,7 +160,7 @@ class Mood extends React.Component< {}, TestPanelState >
 	{
 		return (
 			<>
-				{ <img className="image" src={'./images/svg/' + emojis[this.state.mood]} /> }
+				{ <img className="currentMood" src={'./images/svg/' + emojis[this.state.mood]} /> }
 			</>
 		);
 	}

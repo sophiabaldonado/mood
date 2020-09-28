@@ -44,3 +44,8 @@ body, html
 	width: 175px;
 	margin: 10px;
 }
+
+.currentMood {
+	width: 90%;
+	margin: 5%;
+}
