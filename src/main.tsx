@@ -10,6 +10,7 @@ interface TestPanelState
 {
 	mood: number;
 	grabbableHighlight: HighlightType;
+	selecting: boolean;
 }
 
 interface TestSettings
@@ -59,17 +60,18 @@ class Mood extends React.Component< {}, TestPanelState >
 	constructor( props: any )
 	{
 		super( props );
-		this.state = 
-		{ 
+		this.state =
+		{
 			mood: emojis.length - 1,
 			grabbableHighlight: HighlightType.None,
+			selecting: true,
 		};
 
 		// let moodInterfaceLock: InitialInterfaceLock[] = [];
 		// moodInterfaceLock.push( {
 		// 	iface: "image-interface@1",
 		// 	receiver: null,
-		// 	params: 
+		// 	params:
 		// 	{
 		// 		imgPath: emojis[this.state.mood],
 		// 	}
@@ -81,7 +83,7 @@ class Mood extends React.Component< {}, TestPanelState >
 	{
 		if( !AvGadget.instance().isRemote )
 		{
-			this.m_actionListeners = 
+			this.m_actionListeners =
 			[
 				AvGadget.instance().listenForActionStateWithComponent( EHand.Invalid, EAction.A, this ),
 				AvGadget.instance().listenForActionStateWithComponent( EHand.Invalid, EAction.B, this ),
@@ -95,7 +97,7 @@ class Mood extends React.Component< {}, TestPanelState >
 		else
 		{
 			let params = AvGadget.instance().findInitialInterface( k_TestPanelInterface )?.params as TestSettings;
-			this.onSettingsReceived( params );			
+			this.onSettingsReceived( params );
 		}
 	}
 
@@ -138,13 +140,13 @@ class Mood extends React.Component< {}, TestPanelState >
 			case "set_mood":
 				if( !AvGadget.instance().isRemote )
 				{
-					console.log( "Received unexpected set_mood event on master" );
+					console.log( "Received unexpected set_mood event on local" );
 				}
 				else
 				{
 					this.setState( { mood: event.mood } );
 				}
-				break;		
+				break;
 		}
 	}
 
@@ -164,12 +166,20 @@ class Mood extends React.Component< {}, TestPanelState >
 			</>
 		);
 	}
-	
+
 	public renderLocal()
 	{
-		return <>
-				{ emojis.map((e, i) => <img className="emoji" src={'./images/svg/' + e} onMouseUp={() => this.setState({ mood: i })}/>)}
+		return (
+			<>
+				{
+					this.state.selecting && (
+						emojis.map((e, i) => <img className="emoji" src={'./images/svg/' + e} onMouseUp={() => this.setState({ mood: i, selecting: false })} />)
+					) || (
+						<img className="currentMood" src={'./images/svg/' + emojis[this.state.mood]} onMouseUp={() => this.setState({ selecting: true })} />
+					)
+				}
 			</>
+		);
 	}
 
 	public render()
@@ -183,7 +193,7 @@ class Mood extends React.Component< {}, TestPanelState >
 			remoteInitLocks.push( {
 				iface: k_TestPanelInterface,
 				receiver: null,
-				params: 
+				params:
 				{
 					imgPath: this.state.mood,
 				}
